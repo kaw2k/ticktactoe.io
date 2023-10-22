@@ -3,8 +3,22 @@ import { Token } from './Token'
 
 // Top Left is 0, 0
 
+export interface GameSettings {
+  boardWidth: number
+  boardHeight: number
+  friction: number
+  nudgeForce: number
+  acceleration: number
+  actionsPerStep: number
+  render: boolean
+  collisionDampening: number
+}
+
 export class Game {
-  ctx: CanvasRenderingContext2D | null = null
+  canvas: {
+    element: HTMLCanvasElement
+    ctx: CanvasRenderingContext2D
+  } | null = null
   stepNumber: number = 0
   intervalId: number = 0
 
@@ -12,36 +26,31 @@ export class Game {
   tokens: Token[] = []
 
   // Settings
-  boardWidth: number = 500
-  boardHeight: number = 500
-  friction: number = 0.8
-  nudgeForce: number = 1
-  acceleration: number = 1
-  actionsPerStep: number = 1
+  boardWidth: number
+  boardHeight: number
+  friction: number
+  nudgeForce: number
+  acceleration: number
+  actionsPerStep: number
+  collisionDampening: number
 
-  private constructor({
-    boardWidth,
-    boardHeight,
-    friction,
-    nudgeForce,
-    acceleration,
-    actionsPerStep,
-    render,
-  }: {
-    boardWidth: number
-    boardHeight: number
-    friction: number
-    nudgeForce: number
-    acceleration: number
-    actionsPerStep: number
-    render: boolean
-  }) {
+  constructor({
+    boardWidth = 500,
+    boardHeight = 500,
+    friction = 1,
+    nudgeForce = 1,
+    acceleration = 1,
+    actionsPerStep = 1,
+    collisionDampening = 0.25,
+    render = true,
+  }: Partial<GameSettings>) {
     this.boardWidth = boardWidth
     this.boardHeight = boardHeight
     this.friction = friction
     this.nudgeForce = nudgeForce
     this.acceleration = acceleration
     this.actionsPerStep = actionsPerStep
+    this.collisionDampening = collisionDampening
 
     if (render) {
       const boardContainer = document.getElementById('board-container')!
@@ -49,41 +58,21 @@ export class Game {
       board.width = this.boardWidth
       board.height = this.boardHeight
       boardContainer.appendChild(board)
-      this.ctx = board.getContext('2d')!
+      this.canvas = {
+        element: board,
+        ctx: board.getContext('2d')!,
+      }
     }
-  }
-
-  static of({
-    boardWidth = 500,
-    boardHeight = 500,
-    friction = 1,
-    nudgeForce = 1,
-    acceleration = 1,
-    actionsPerStep = 1,
-    render = true,
-  }: {
-    boardWidth?: number
-    boardHeight?: number
-    friction?: number
-    nudgeForce?: number
-    acceleration?: number
-    actionsPerStep?: number
-    render?: boolean
-  }) {
-    return new Game({
-      acceleration,
-      actionsPerStep,
-      boardHeight,
-      boardWidth,
-      friction,
-      nudgeForce,
-      render,
-    })
   }
 
   step() {
     this.tokens.forEach((token) => {
-      token.updateLocation(this.friction)
+      token.updateLocation({
+        friction: this.friction,
+        boardHeight: this.boardHeight,
+        boardWidth: this.boardWidth,
+        collisionDampening: this.collisionDampening,
+      })
     })
   }
 
@@ -97,10 +86,12 @@ export class Game {
   }
 
   render() {
-    if (!this.ctx) return
-    this.ctx.clearRect(0, 0, this.boardWidth, this.boardHeight)
+    if (!this.canvas) return
+    const canvas = this.canvas
+
+    canvas.ctx.clearRect(0, 0, this.boardWidth, this.boardHeight)
     this.tokens.forEach((token) => {
-      token.render(this.ctx!)
+      token.render(canvas.ctx)
     })
   }
 

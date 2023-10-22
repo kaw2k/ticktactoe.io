@@ -51,20 +51,64 @@ export class Token {
     return hypotenuse - radii
   }
 
-  updateLocation(friction: number) {
+  updateLocation({
+    friction,
+    boardHeight,
+    boardWidth,
+    collisionDampening,
+  }: {
+    friction: number
+    boardHeight: number
+    boardWidth: number
+    collisionDampening: number
+  }) {
     this.position = [
       this.position[0] + this.forces[0],
       this.position[1] + this.forces[1],
     ]
+
+    const hasHitBoundary =
+      this.position[0] < 0 ||
+      this.position[0] > boardWidth ||
+      this.position[1] < 0 ||
+      this.position[1] > boardHeight
+
+    if (hasHitBoundary) {
+      const deltaX =
+        this.position[0] < 0
+          ? this.position[0]
+          : this.position[0] - boardWidth > 0
+          ? this.position[0] - boardWidth
+          : 0
+      const deltaY =
+        this.position[1] < 0
+          ? this.position[1]
+          : this.position[1] - boardHeight > 0
+          ? this.position[1] - boardHeight
+          : 0
+
+      if (deltaX !== 0) {
+        this.position[0] -= deltaX
+        this.forces[0] = -(1 - collisionDampening) * this.forces[0]
+      }
+      if (deltaY !== 0) {
+        this.position[1] -= deltaY
+        this.forces[1] = -(1 - collisionDampening) * this.forces[1]
+      }
+    }
+
     this.forces = [
       clampFriction(this.forces[0] * friction),
       clampFriction(this.forces[1] * friction),
     ]
   }
 
-  updateOwnership() {}
-
-  updateType() {}
+  settleIntersections(tokens: Token[]) {
+    tokens
+      .filter((token) => token !== this && this.intersects(token) <= 0)
+      .sort((a, b) => this.intersects(a) - this.intersects(b))
+      .forEach((token) => {})
+  }
 
   render(ctx: CanvasRenderingContext2D) {
     ctx.beginPath()
@@ -75,6 +119,7 @@ export class Token {
 }
 
 function clampFriction(vd: number) {
-  if (Math.abs(vd) < 0.01) return 0
+  // if (hasHitBoundary) return -BOUNCE_FACTOR * vd
+  // if (Math.abs(vd) < 0.01) return 0
   return vd
 }
