@@ -6,12 +6,12 @@ export function Settings(game: Game) {
   settingsContainer.appendChild(
     Slider({
       label: 'Friction',
-      min: 0.89,
+      min: 0,
       max: 1,
-      step: 0.001,
-      value: game.friction,
+      step: 0.01,
+      value: 1 - game.friction,
       onChange: (value) => {
-        game.friction = value
+        game.friction = 1 - value * 0.15
       },
     })
   )
