@@ -7,9 +7,20 @@ export type TokenType = 'rock' | 'paper' | 'scissors'
 export class Token {
   type: TokenType
   owner: PlayerId
-  radius: number = 10
+  radius: number = 20
   position: Position
   forces: Forces = [0, 0]
+
+  private get symbol() {
+    switch (this.type) {
+      case 'paper':
+        return '📃'
+      case 'rock':
+        return '🪨'
+      case 'scissors':
+        return '✂️'
+    }
+  }
 
   private constructor(type: TokenType, owner: PlayerId, position: Position) {
     this.type = type
@@ -111,15 +122,25 @@ export class Token {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    ctx.beginPath()
-    ctx.arc(...this.position, this.radius, 0, 360)
-    ctx.fillStyle = 'black'
-    ctx.fill()
+    ctx.save()
+    // ctx.translate(this.radius * 0.5, this.radius * 0.5)
+    // ctx.rotate(Math.atan2(this.forces[1], this.forces[0]) * Math.PI * 0.5)
+    // ctx.translate(-this.radius * 0.5, -this.radius * 0.5)
+
+    // ctx.translate(...this.position)
+    // Have the image face the direction of the velocity
+    // ctx.rotate(  Math.PI / 180)
+    // ctx.rotate(Math.atan2(this.forces[1], this.forces[0]))
+    ctx.font = `${this.radius}px serif`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(this.symbol, ...this.position)
+    // ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.restore()
   }
 }
 
 function clampFriction(vd: number) {
-  // if (hasHitBoundary) return -BOUNCE_FACTOR * vd
   // if (Math.abs(vd) < 0.01) return 0
   return vd
 }

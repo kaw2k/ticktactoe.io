@@ -15,7 +15,7 @@ const game = new Game({
 Settings(game)
 
 const p1 = game.addPlayer()
-const token = Token.of('rock', p1.id, [100, 100])
+const token = Token.of('scissors', p1.id, [100, 100])
 game.addToken(token)
 game.start()
 
