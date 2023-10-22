@@ -108,10 +108,7 @@ export class Token {
       }
     }
 
-    this.forces = [
-      clampFriction(this.forces[0] * friction),
-      clampFriction(this.forces[1] * friction),
-    ]
+    this.forces = [this.forces[0] * friction, this.forces[1] * friction]
   }
 
   settleIntersections(tokens: Token[]) {
@@ -122,42 +119,16 @@ export class Token {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    // Draw a circle (temporary, for debugging)
-    ctx.beginPath()
-    ctx.arc(...this.position, this.radius, 0, 360)
-    ctx.fillStyle = 'black'
-    ctx.fill()
-
     // Draw an emoji
     ctx.save()
     ctx.translate(this.position[0], this.position[1])
-
-    // Manual method to rotate the emoji
-    if (Math.abs(this.forces[0]) > Math.abs(this.forces[1])) {
-      if (this.forces[0] > 0) {
-        ctx.rotate(-Math.PI / 2)
-      } else {
-        ctx.rotate(Math.PI / 2)
-      }
-    } else {
-      if (this.forces[1] > 0) {
-        ctx.rotate(0)
-      } else {
-        ctx.rotate(Math.PI)
-      }
-    }
-
+    ctx.rotate(-Math.PI / 2)
+    ctx.rotate(Math.atan2(this.forces[1], this.forces[0]))
     ctx.translate(-this.position[0], -this.position[1])
-
-    ctx.font = `${this.radius}px sans-serif`
+    ctx.font = `${this.radius * 1.7}px sans-serif`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(this.symbol, ...this.position)
     ctx.restore()
   }
-}
-
-function clampFriction(vd: number) {
-  // if (Math.abs(vd) < 0.01) return 0
-  return vd
 }
