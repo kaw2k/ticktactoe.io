@@ -66,11 +66,11 @@ document.addEventListener('keydown', (e) => {
 /**
  * Temporary click to add new tokens
  */
-game.canvas?.element.addEventListener('click', (e) => {
-  const rect = game.canvas?.element.getBoundingClientRect()
-  const x = e.clientX - (rect?.left ?? 0)
-  const y = e.clientY - (rect?.top ?? 0)
+// game.canvas?.element.addEventListener('click', (e) => {
+//   const rect = game.canvas?.element.getBoundingClientRect()
+//   const x = e.clientX - (rect?.left ?? 0)
+//   const y = e.clientY - (rect?.top ?? 0)
 
-  const token = Token.of('rock', p1.id, [x, y])
-  game.addToken(token)
-})
+//   const token = Token.of('rock', p1.id, [x, y])
+//   game.addToken(token)
+// })
