@@ -131,11 +131,22 @@ export class Token {
     // Draw an emoji
     ctx.save()
     ctx.translate(this.position[0], this.position[1])
-    // ctx.rotate(Math.atan(this.forces[1] / this.forces[0]) * 180)
-    // ctx.rotate(Math.PI * Math.atan(this.forces[1] / this.forces[0]))
-    // ctx.rotate(Math.PI * Math.atan(this.forces[1] / this.forces[0]))
-    // ctx.rotate(Math.PI)
-    // ctx.translate(-this.position[0], -this.position[1])
+
+    // Manual method to rotate the emoji
+    if (Math.abs(this.forces[0]) > Math.abs(this.forces[1])) {
+      if (this.forces[0] > 0) {
+        ctx.rotate(-Math.PI / 2)
+      } else {
+        ctx.rotate(Math.PI / 2)
+      }
+    } else {
+      if (this.forces[1] > 0) {
+        ctx.rotate(0)
+      } else {
+        ctx.rotate(Math.PI)
+      }
+    }
+
     ctx.translate(-this.position[0], -this.position[1])
 
     ctx.font = `${this.radius}px sans-serif`
