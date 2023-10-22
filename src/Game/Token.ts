@@ -7,14 +7,14 @@ export type TokenType = 'rock' | 'paper' | 'scissors'
 export class Token {
   type: TokenType
   owner: PlayerId
-  radius: number = 20
+  radius: number = 40
   position: Position
   forces: Forces = [0, 0]
 
   private get symbol() {
     switch (this.type) {
       case 'paper':
-        return '📃'
+        return '📄'
       case 'rock':
         return '🪨'
       case 'scissors':
@@ -122,20 +122,26 @@ export class Token {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    ctx.save()
-    // ctx.translate(this.radius * 0.5, this.radius * 0.5)
-    // ctx.rotate(Math.atan2(this.forces[1], this.forces[0]) * Math.PI * 0.5)
-    // ctx.translate(-this.radius * 0.5, -this.radius * 0.5)
+    // Draw a circle (temporary, for debugging)
+    ctx.beginPath()
+    ctx.arc(...this.position, this.radius, 0, 360)
+    ctx.fillStyle = 'black'
+    ctx.fill()
 
-    // ctx.translate(...this.position)
-    // Have the image face the direction of the velocity
-    // ctx.rotate(  Math.PI / 180)
-    // ctx.rotate(Math.atan2(this.forces[1], this.forces[0]))
-    ctx.font = `${this.radius}px serif`
+    // Draw an emoji
+    ctx.save()
+    ctx.translate(this.position[0], this.position[1])
+    // ctx.rotate(Math.atan(this.forces[1] / this.forces[0]) * 180)
+    // ctx.rotate(Math.PI * Math.atan(this.forces[1] / this.forces[0]))
+    // ctx.rotate(Math.PI * Math.atan(this.forces[1] / this.forces[0]))
+    // ctx.rotate(Math.PI)
+    // ctx.translate(-this.position[0], -this.position[1])
+    ctx.translate(-this.position[0], -this.position[1])
+
+    ctx.font = `${this.radius}px sans-serif`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(this.symbol, ...this.position)
-    // ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.restore()
   }
 }
