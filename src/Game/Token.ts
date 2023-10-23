@@ -22,6 +22,14 @@ export class Token {
     }
   }
 
+  private isCapturedBy(other: Token) {
+    return (
+      (this.type === 'rock' && other.type === 'paper') ||
+      (this.type === 'paper' && other.type === 'scissors') ||
+      (this.type === 'scissors' && other.type === 'rock')
+    )
+  }
+
   private constructor(type: TokenType, owner: PlayerId, position: Position) {
     this.type = type
     this.owner = owner
@@ -111,11 +119,35 @@ export class Token {
     this.forces = [this.forces[0] * friction, this.forces[1] * friction]
   }
 
+  applyOverlappingForces(tokens: Token[]) {
+    tokens
+      .filter((token) => token !== this && this.intersects(token) <= 0)
+      .forEach((token) => {
+        // const intersection = this.intersects(token)
+        // console.log(intersection)
+        // const p1 = token.position
+        // const p2 = this.position
+        // const m = (p2[1] - p1[1]) / (p2[0] - p1[0])
+        // const b = p1[1] - m * p1[0]
+        // const x1 =
+        // y = mx + b
+        // x = (y - b) / m
+        // this.forces[0] += m * intersection
+        // this.forces[1] += m * intersection
+      })
+  }
+
   settleIntersections(tokens: Token[]) {
     tokens
       .filter((token) => token !== this && this.intersects(token) <= 0)
       .sort((a, b) => this.intersects(a) - this.intersects(b))
-      .forEach((token) => {})
+      .some((token) => {
+        if (this.isCapturedBy(token)) {
+          this.owner = token.owner
+          this.type = token.type
+          return true
+        }
+      })
   }
 
   render(ctx: CanvasRenderingContext2D) {

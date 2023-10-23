@@ -8,7 +8,6 @@ export interface GameSettings {
   boardHeight: number
   friction: number
   nudgeForce: number
-  acceleration: number
   actionsPerStep: number
   render: boolean
   collisionDampening: number
@@ -30,7 +29,6 @@ export class Game {
   boardHeight: number
   friction: number
   nudgeForce: number
-  acceleration: number
   actionsPerStep: number
   collisionDampening: number
 
@@ -39,7 +37,6 @@ export class Game {
     boardHeight = 500,
     friction = 1,
     nudgeForce = 1,
-    acceleration = 1,
     actionsPerStep = 1,
     collisionDampening = 0.25,
     render = true,
@@ -48,7 +45,6 @@ export class Game {
     this.boardHeight = boardHeight
     this.friction = friction
     this.nudgeForce = nudgeForce
-    this.acceleration = acceleration
     this.actionsPerStep = actionsPerStep
     this.collisionDampening = collisionDampening
 
@@ -73,6 +69,14 @@ export class Game {
         boardWidth: this.boardWidth,
         collisionDampening: this.collisionDampening,
       })
+    })
+
+    this.tokens.forEach((token) => {
+      token.settleIntersections(this.tokens)
+    })
+
+    this.tokens.forEach((token) => {
+      token.applyOverlappingForces(this.tokens)
     })
   }
 

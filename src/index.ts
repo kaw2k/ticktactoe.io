@@ -8,7 +8,6 @@ const game = new Game({
   boardWidth: canvasContainer.clientWidth,
   boardHeight: canvasContainer.clientHeight,
   friction: 0.96,
-  acceleration: 1,
   nudgeForce: 2,
 })
 
