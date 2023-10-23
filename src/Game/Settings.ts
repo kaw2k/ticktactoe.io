@@ -41,6 +41,32 @@ export function Settings(game: Game) {
       },
     })
   )
+
+  settingsContainer.appendChild(
+    Slider({
+      label: 'Actions Per Step',
+      min: 1,
+      max: 20,
+      step: 1,
+      value: game.actionsPerStep,
+      onChange: (value) => {
+        game.actionsPerStep = value
+      },
+    })
+  )
+
+  settingsContainer.appendChild(
+    Slider({
+      label: 'Steps Per Second',
+      min: 1,
+      max: 120,
+      step: 1,
+      value: game.stepsPerSecond,
+      onChange: (value) => {
+        game.stepsPerSecond = value
+      },
+    })
+  )
 }
 
 function Slider({
@@ -66,17 +92,22 @@ function Slider({
   range.value = value.toString()
 
   const title = document.createElement('label')
-  title.innerText = `${label}: ${range.value}`
+  title.innerText = `${label}`
+
+  const output = document.createElement('span')
+  output.innerText = `${range.value}`
+  output.className = 'slider-output'
 
   const container = document.createElement('div')
   container.className = 'input-container'
   container.appendChild(title)
   container.appendChild(range)
+  container.appendChild(output)
 
   range.addEventListener('input', (e) => {
     const target = e.target as HTMLInputElement
     onChange(Number(target.value))
-    title.innerText = `${label}: ${range.value}`
+    output.innerText = `${range.value}`
   })
 
   return container

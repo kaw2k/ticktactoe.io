@@ -17,11 +17,11 @@ body {
 }
 
 #board-container {
-  flex: 1 1 auto;
+  flex: 1 1 80vw;
 }
 
 #settings-container {
-  flex: 1 1 auto;
+  flex: 1 1 20vw;
   background-color: rgba(0, 0, 0, 0.1);
 
   display: flex;
@@ -30,7 +30,12 @@ body {
   align-items: center;
 
   padding: 1em;
-  gap: 1em;
+  gap: 2em;
+}
+
+.slider-output {
+  display: block;
+  text-align: right;
 }
 
 canvas {

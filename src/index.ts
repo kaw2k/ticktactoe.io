@@ -1,4 +1,5 @@
 import { Game } from './Game/Game'
+import { RandomPlayer } from './Game/Players/RandomPlayer'
 import { Settings } from './Game/Settings'
 import { Token } from './Game/Token'
 
@@ -13,12 +14,60 @@ const game = new Game({
 
 Settings(game)
 
-const p1 = game.addPlayer()
-const token = Token.of('scissors', p1.id, [100, 100])
-game.addToken(token)
+const p1 = game.addPlayer(RandomPlayer.of())
+const p2 = game.addPlayer(RandomPlayer.of())
+const p3 = game.addPlayer(RandomPlayer.of())
 
-game.addToken(Token.of('rock', p1.id, [200, 100]))
-game.addToken(Token.of('paper', p1.id, [300, 100]))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+game.addToken(Token.of(p1.id, game.randomPosition()))
+
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+game.addToken(Token.of(p2.id, game.randomPosition()))
+
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
+game.addToken(Token.of(p3.id, game.randomPosition()))
 
 game.start()
 
@@ -51,20 +100,20 @@ function handleResize() {
 /**
  * Temporary arrow key controls for the first token
  */
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight') {
-    token.act('right', game.nudgeForce)
-  }
-  if (e.key === 'ArrowLeft') {
-    token.act('left', game.nudgeForce)
-  }
-  if (e.key === 'ArrowDown') {
-    token.act('down', game.nudgeForce)
-  }
-  if (e.key === 'ArrowUp') {
-    token.act('up', game.nudgeForce)
-  }
-})
+// document.addEventListener('keydown', (e) => {
+//   if (e.key === 'ArrowRight') {
+//     token.act('right', game.nudgeForce)
+//   }
+//   if (e.key === 'ArrowLeft') {
+//     token.act('left', game.nudgeForce)
+//   }
+//   if (e.key === 'ArrowDown') {
+//     token.act('down', game.nudgeForce)
+//   }
+//   if (e.key === 'ArrowUp') {
+//     token.act('up', game.nudgeForce)
+//   }
+// })
 
 /**
  * Temporary click to add new tokens

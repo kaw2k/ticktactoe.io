@@ -1,15 +1,16 @@
 import { Forces } from '../utils/Forces'
 import { Position } from '../utils/Position'
-import { PlayerId } from './Player'
+import { PlayerId } from './Players/Player'
 
 export type TokenType = 'rock' | 'paper' | 'scissors'
 
 export class Token {
   type: TokenType
   owner: PlayerId
-  radius: number = 40
+  radius: number = 10
   position: Position
   forces: Forces = [0, 0]
+  actedThisStep: boolean = false
 
   private get symbol() {
     switch (this.type) {
@@ -36,8 +37,17 @@ export class Token {
     this.position = position
   }
 
-  static of(type: TokenType, owner: PlayerId, position: Position) {
+  static of(
+    owner: PlayerId,
+    position: Position,
+    type: TokenType = Token.randomType()
+  ) {
     return new Token(type, owner, position)
+  }
+
+  static randomType(): TokenType {
+    const types = ['rock', 'paper', 'scissors'] as const
+    return types[Math.floor(Math.random() * 3)]
   }
 
   act(direction: 'left' | 'right' | 'up' | 'down', nudgeForce: number) {
@@ -55,6 +65,8 @@ export class Token {
         this.forces[1] += nudgeForce
         break
     }
+
+    this.actedThisStep = true
   }
 
   /**
@@ -148,6 +160,10 @@ export class Token {
           return true
         }
       })
+  }
+
+  endStep() {
+    this.actedThisStep = false
   }
 
   render(ctx: CanvasRenderingContext2D) {

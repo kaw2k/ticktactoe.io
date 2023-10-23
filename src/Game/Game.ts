@@ -1,4 +1,4 @@
-import { Player } from './Player'
+import { Player } from './Players/Player'
 import { Token } from './Token'
 
 // Top Left is 0, 0
@@ -11,6 +11,8 @@ export interface GameSettings {
   actionsPerStep: number
   render: boolean
   collisionDampening: number
+  repeatNudges: boolean
+  stepsPerSecond: number
 }
 
 export class Game {
@@ -20,6 +22,7 @@ export class Game {
   } | null = null
   stepNumber: number = 0
   intervalId: number = 0
+  gameActive = false
 
   players: Player[] = []
   tokens: Token[] = []
@@ -31,6 +34,8 @@ export class Game {
   nudgeForce: number
   actionsPerStep: number
   collisionDampening: number
+  repeatNudges: boolean
+  stepsPerSecond: number
 
   constructor({
     boardWidth = 500,
@@ -40,6 +45,8 @@ export class Game {
     actionsPerStep = 1,
     collisionDampening = 0.25,
     render = true,
+    repeatNudges = false,
+    stepsPerSecond = 30,
   }: Partial<GameSettings>) {
     this.boardWidth = boardWidth
     this.boardHeight = boardHeight
@@ -47,6 +54,8 @@ export class Game {
     this.nudgeForce = nudgeForce
     this.actionsPerStep = actionsPerStep
     this.collisionDampening = collisionDampening
+    this.repeatNudges = repeatNudges
+    this.stepsPerSecond = stepsPerSecond
 
     if (render) {
       const boardContainer = document.getElementById('board-container')!
@@ -59,9 +68,20 @@ export class Game {
         ctx: board.getContext('2d')!,
       }
     }
+
+    this.gameLoop()
+  }
+
+  gameLoop() {
+    if (this.gameActive) this.step()
+    setTimeout(this.gameLoop.bind(this), 1000 / this.stepsPerSecond)
   }
 
   step() {
+    this.players.forEach((player) => {
+      player.act(this.actionsPerStep, this)
+    })
+
     this.tokens.forEach((token) => {
       token.updateLocation({
         friction: this.friction,
@@ -78,6 +98,19 @@ export class Game {
     this.tokens.forEach((token) => {
       token.applyOverlappingForces(this.tokens)
     })
+
+    this.tokens.forEach((token) => {
+      token.endStep()
+    })
+
+    this.render()
+  }
+
+  randomPosition(): [number, number] {
+    return [
+      Math.floor(Math.random() * this.boardWidth),
+      Math.floor(Math.random() * this.boardHeight),
+    ]
   }
 
   addPlayer(player: Player = Player.of()) {
@@ -100,13 +133,10 @@ export class Game {
   }
 
   start() {
-    this.intervalId = setInterval(() => {
-      this.step()
-      this.render()
-    }, 1000 / 60)
+    this.gameActive = true
   }
 
   stop() {
-    clearInterval(this.intervalId)
+    this.gameActive = false
   }
 }
