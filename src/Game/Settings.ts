@@ -1,20 +1,27 @@
 import type { Game } from './Game'
 import { PlayerId } from './Players/Player'
 import { RandomPlayer } from './Players/RandomPlayer'
-import { Token, TokenType } from './Token'
+import { IntersectionProtocol, Token, TokenType } from './Token'
 
 const UPDATE_INTERVAL = 500
 
 export function Tokens(game: Game) {
   const $tokensContainer = document.getElementById('token-container')!
   const $pieceContainer = document.getElementById('piece-container')!
+  const $intersectionContainer = document.getElementById(
+    'intersection-container'
+  )!
   const $forContainer = document.getElementById('for-container')!
 
   let tokenType: TokenType = '' as TokenType
   let playerId: PlayerId = '' as PlayerId
+  let intersectionProtocol: IntersectionProtocol =
+    'capture' as IntersectionProtocol
 
   $pieceContainer.onchange = (e: any) => (tokenType = e.target.value)
   $forContainer.onchange = (e: any) => (playerId = e.target.value)
+  $intersectionContainer.onchange = (e: any) =>
+    (intersectionProtocol = e.target.value)
 
   game.canvas?.element.addEventListener('click', (e) => {
     if (!tokenType || !playerId) return
@@ -23,7 +30,7 @@ export function Tokens(game: Game) {
     const x = e.clientX - (rect?.left ?? 0)
     const y = e.clientY - (rect?.top ?? 0)
 
-    game.addToken(Token.of(playerId, [x, y], tokenType))
+    game.addToken(Token.of(playerId, [x, y], tokenType, intersectionProtocol))
   })
 
   $pieceContainer.append(
@@ -46,6 +53,37 @@ export function Tokens(game: Game) {
       label: 'Scissors',
       value: 'scissors',
       name: 'piece',
+    }),
+
+    Radio({
+      id: 'grow',
+      label: 'Grow',
+      value: 'grow',
+      name: 'intersection',
+    })
+  )
+
+  $intersectionContainer.append(
+    Radio({
+      id: 'capture',
+      label: 'Capture',
+      value: 'capture',
+      name: 'intersection',
+      defaultChecked: intersectionProtocol === 'capture',
+    }),
+    Radio({
+      id: 'destroy',
+      label: 'Destroy',
+      value: 'destroy',
+      name: 'intersection',
+      defaultChecked: intersectionProtocol === 'destroy',
+    }),
+    Radio({
+      id: 'consume',
+      label: 'Consume',
+      value: 'consume',
+      name: 'intersection',
+      defaultChecked: intersectionProtocol === 'consume',
     })
   )
 
@@ -263,12 +301,14 @@ function Radio({
   name,
   id,
   value,
+  defaultChecked,
   onClick,
 }: {
   id: string
   name: string
   label: string
   value: string
+  defaultChecked?: boolean
   onClick?: () => void
 }) {
   const $wrapper = document.createElement('div')
@@ -279,6 +319,7 @@ function Radio({
   $input.id = id
   $input.value = value
   $input.name = name
+  $input.defaultChecked = defaultChecked ?? false
 
   const $label = document.createElement('label')
   $label.innerText = label

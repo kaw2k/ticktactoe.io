@@ -124,6 +124,10 @@ export class Game {
     this.tokens.push(token)
   }
 
+  removeToken(token: Token) {
+    this.tokens = this.tokens.filter((t) => t !== token)
+  }
+
   render() {
     if (!this.canvas) return
     const canvas = this.canvas

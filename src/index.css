@@ -29,6 +29,7 @@ body {
   padding: 1em;
   display: flex;
   gap: 3em;
+  flex-wrap: wrap;
 }
 
 #board-container {
@@ -94,6 +95,7 @@ button:active {
 }
 
 #piece-container,
+#intersection-container,
 #for-container {
   display: flex;
   gap: 1em;

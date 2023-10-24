@@ -3,6 +3,7 @@ import { Position } from '../utils/Position'
 import { PlayerId } from './Players/Player'
 
 export type TokenType = 'rock' | 'paper' | 'scissors'
+export type IntersectionProtocol = 'capture' | 'destroy' | 'consume'
 
 export class Token {
   type: TokenType
@@ -11,6 +12,7 @@ export class Token {
   position: Position
   forces: Forces = [0, 0]
   actedThisStep: boolean = false
+  intersectionProtocol: IntersectionProtocol
 
   private get symbol() {
     switch (this.type) {
@@ -23,7 +25,7 @@ export class Token {
     }
   }
 
-  private isCapturedBy(other: Token) {
+  private isConqueredBy(other: Token) {
     return (
       (this.type === 'rock' && other.type === 'paper') ||
       (this.type === 'paper' && other.type === 'scissors') ||
@@ -31,18 +33,25 @@ export class Token {
     )
   }
 
-  private constructor(type: TokenType, owner: PlayerId, position: Position) {
+  private constructor(
+    type: TokenType,
+    owner: PlayerId,
+    position: Position,
+    intersectionProtocol: IntersectionProtocol
+  ) {
     this.type = type
     this.owner = owner
     this.position = position
+    this.intersectionProtocol = intersectionProtocol
   }
 
   static of(
     owner: PlayerId,
     position: Position,
-    type: TokenType = Token.randomType()
+    type: TokenType = Token.randomType(),
+    intersectionProtocol: IntersectionProtocol = 'capture'
   ) {
-    return new Token(type, owner, position)
+    return new Token(type, owner, position, intersectionProtocol)
   }
 
   static randomType(): TokenType {
@@ -154,12 +163,28 @@ export class Token {
       .filter((token) => token !== this && this.intersects(token) <= 0)
       .sort((a, b) => this.intersects(a) - this.intersects(b))
       .some((token) => {
-        if (this.isCapturedBy(token)) {
-          this.owner = token.owner
-          this.type = token.type
+        if (this.isConqueredBy(token)) {
+          if (this.intersectionProtocol === 'capture') {
+            this.owner = token.owner
+            this.type = token.type
+          } else if (this.intersectionProtocol === 'consume') {
+            token.growFromConsuming(this)
+          } else if (this.intersectionProtocol === 'destroy') {
+            this.destroy()
+          }
+
           return true
         }
       })
+  }
+
+  growFromConsuming(other: Token) {
+    this.radius += other.radius / 2
+    other.destroy()
+  }
+
+  destroy() {
+    window.game.removeToken(this)
   }
 
   endStep() {
