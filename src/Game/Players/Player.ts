@@ -7,9 +7,11 @@ export const PlayerId = () => Id() as PlayerId
 
 export class Player {
   id: PlayerId
+  label: string
 
   constructor() {
     this.id = PlayerId()
+    this.label = `Static Player`
   }
 
   static of() {

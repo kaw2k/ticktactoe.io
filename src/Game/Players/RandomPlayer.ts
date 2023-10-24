@@ -4,6 +4,7 @@ import { Player } from './Player'
 export class RandomPlayer extends Player {
   constructor() {
     super()
+    this.label = `Random Player`
   }
 
   static of() {

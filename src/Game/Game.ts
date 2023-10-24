@@ -73,35 +73,37 @@ export class Game {
   }
 
   gameLoop() {
-    if (this.gameActive) this.step()
+    this.step()
     setTimeout(this.gameLoop.bind(this), 1000 / this.stepsPerSecond)
   }
 
   step() {
-    this.players.forEach((player) => {
-      player.act(this.actionsPerStep, this)
-    })
-
-    this.tokens.forEach((token) => {
-      token.updateLocation({
-        friction: this.friction,
-        boardHeight: this.boardHeight,
-        boardWidth: this.boardWidth,
-        collisionDampening: this.collisionDampening,
+    if (this.gameActive) {
+      this.players.forEach((player) => {
+        player.act(this.actionsPerStep, this)
       })
-    })
 
-    this.tokens.forEach((token) => {
-      token.settleIntersections(this.tokens)
-    })
+      this.tokens.forEach((token) => {
+        token.updateLocation({
+          friction: this.friction,
+          boardHeight: this.boardHeight,
+          boardWidth: this.boardWidth,
+          collisionDampening: this.collisionDampening,
+        })
+      })
 
-    this.tokens.forEach((token) => {
-      token.applyOverlappingForces(this.tokens)
-    })
+      this.tokens.forEach((token) => {
+        token.settleIntersections(this.tokens)
+      })
 
-    this.tokens.forEach((token) => {
-      token.endStep()
-    })
+      this.tokens.forEach((token) => {
+        token.applyOverlappingForces(this.tokens)
+      })
+
+      this.tokens.forEach((token) => {
+        token.endStep()
+      })
+    }
 
     this.render()
   }
